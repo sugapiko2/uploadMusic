@@ -40,6 +40,13 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                     text: "これはこれは！こんにちは〜"
                 }));
             }
+            if (event.message.text == "おつかれ"){
+                // replyMessage()で返信し、そのプロミスをevents_processedに追加。
+                events_processed.push(bot.replyMessage(event.replyToken, {
+                    type: "text",
+                    text: "拙者、今日もなにもしてないけど、お疲れ！！"
+                }));
+            }
         }
     });
 
