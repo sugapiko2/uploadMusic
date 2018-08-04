@@ -14,6 +14,13 @@ const line_config = {
 // Webサーバー設定
 server.listen(process.env.PORT || 3000);
 
+// View EngineにEJSを指定。
+server.set('view engine', 'ejs');
+// "/"へのGETリクエストでindex.ejsを表示する。拡張子（.ejs）は省略されていることに注意。
+server.get("/", function(req, res, next){
+    res.render("index", {});
+});
+
 
 // APIコールのためのクライアントインスタンスを作成
 const bot = new line.Client(line_config);
