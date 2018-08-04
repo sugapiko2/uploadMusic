@@ -60,28 +60,26 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                 type: "text",
                 text: "画像ですな！"
             }));
-            events_processed.push(bot.replyMessage(event.replyToken, {
-                type: "text",
-                text: "画像ですな２！"
-            }));
         }
         if (event.type == "message" && event.message.type == "file"){
-            events_processed.push(bot.replyMessage(event.replyToken, require("./confirm-button.json")));
-            var contentId = event.message.id;
-            bot.getMessageContent(contentId)
-                .then((stream) => {
+            if(event.message.fileName.includes("m4a")){
+                events_processed.push(bot.replyMessage(event.replyToken, {
+                    type: "text",
+                    text: "いい音ですので保存しておきますぞ！"
+                }));
+            } else {
+                events_processed.push(bot.replyMessage(event.replyToken, require("./confirm-button.json")));
+                var contentId = event.message.id;
+                bot.getMessageContent(contentId)
+                    .then((stream) => {
 
-                })
-            events_processed.push(bot.replyMessage(event.replyToken, {
-                type: "text",
-                text: "ファイルですな！"
-            }));
-            // if(event.message.fileName.includes("m4a")){
-            //     events_processed.push(bot.replyMessage(event.replyToken, {
-            //         type: "text",
-            //         text: "いい音ですので保存しておきますぞ！"
-            //     }));
-            // }
+                    })
+                // events_processed.push(bot.replyMessage(event.replyToken, {
+                //     type: "text",
+                //     text: "ファイルですな！"
+                // }));
+            }
+
         }
     });
 
