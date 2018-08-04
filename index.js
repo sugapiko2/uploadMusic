@@ -55,13 +55,18 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                 }));
             }
         }
-        if (event.type == "file"){
-            // ユーザーからのテキストメッセージが「こんにちは」だった場合のみ反応。
+        if (event.type == "message" && event.message.type == "image"){
+            events_processed.push(bot.replyMessage(event.replyToken, {
+                type: "text",
+                text: "画像ですな！"
+            }));
+        }
+        if (event.type == "message" && event.message.type == "file"){
             events_processed.push(bot.replyMessage(event.replyToken, {
                 type: "text",
                 text: "ファイルですな！"
             }));
-            if(event.fileName.includes("m4a")){
+            if(event.message.fileName.includes("m4a")){
                 events_processed.push(bot.replyMessage(event.replyToken, {
                     type: "text",
                     text: "いい音ですので保存しておきますぞ！"
