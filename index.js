@@ -37,9 +37,6 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
 
     // イベントオブジェクトを順次処理。
     req.body.events.forEach((event) => {
-        console.log("パラメータどんなもんよ");
-        console.log(event.type);
-        console.log(event.message.type);
         // この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
         if (event.type == "message" && event.message.type == "text"){
             // ユーザーからのテキストメッセージが「こんにちは」だった場合のみ反応。
@@ -58,13 +55,18 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                 }));
             }
         }
-        if (event.type == "message" && event.message.type == "audio"){
+        if (event.type == "file"){
             // ユーザーからのテキストメッセージが「こんにちは」だった場合のみ反応。
-            console.log("musicじゃないの？");
             events_processed.push(bot.replyMessage(event.replyToken, {
                 type: "text",
-                text: "＂いい音ですので保存しておきますぞ！"
+                text: "ファイルですな！"
             }));
+            if(event.fileName.includes("m4a")){
+                events_processed.push(bot.replyMessage(event.replyToken, {
+                    type: "text",
+                    text: "いい音ですので保存しておきますぞ！"
+                }));
+            }
         }
     });
 
