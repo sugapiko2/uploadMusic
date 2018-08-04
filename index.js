@@ -35,6 +35,9 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
     // すべてのイベント処理のプロミスを格納する配列。
     let events_processed = [];
 
+    console.log("パラメータどんなもんよ");
+    console.log(event.type);
+    console.log(event.message.type);
     // イベントオブジェクトを順次処理。
     req.body.events.forEach((event) => {
         // この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
@@ -57,6 +60,7 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
         }
         if (event.type == "message" && event.message.type == "audio"){
             // ユーザーからのテキストメッセージが「こんにちは」だった場合のみ反応。
+            console.log("musicじゃないの？");
             events_processed.push(bot.replyMessage(event.replyToken, {
                 type: "text",
                 text: "＂いい音ですので保存しておきますぞ！"
