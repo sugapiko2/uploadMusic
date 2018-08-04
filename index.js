@@ -34,9 +34,13 @@ server.get("/", function(req, res, next){
 const bot = new line.Client(line_config);
 
 var s3 = new AWS.S3();
-var params1 = {Bucket: process.env.S3_BUCKET, Key: 'testKey1', Body: 'Hello!'};
-s3.putObject(params1).done(function(resp) {
-    console.log("Successfully uploaded data to myBucket/testKey1");
+var params1 = {Bucket: 'upload-music', Key: 'testKey1', Body: 'Hello!'};
+s3.putObject(params1, function(err, data) {
+         if (err) {
+             console.log(err)
+         } else {
+             console.log("Successfully uploaded data to myBucket/myKey");
+         }
 });
 
 // -----------------------------------------------------------------------------
