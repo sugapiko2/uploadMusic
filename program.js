@@ -1,5 +1,6 @@
 console.log('program.js');
-jQuery(function($){
+var $ = require('jQuery');
+$(function($){
 	var apiKey = 'AIzaSyDRDoGU_2jQ-HG1gPK-PSpeR4zmG2upqA8';
 	function getResult(e){
 		$.getJSON(
