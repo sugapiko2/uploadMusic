@@ -11,10 +11,9 @@ const line_config = {
     channelSecret: process.env.LINE_CHANNEL_SECRET // 環境変数からChannel Secretをセットしています
 };
 AWS.config.update({
-    accessKeyId: 'ACCESS_KEY',
-    secretAccessKey: 'SECRET_KEY',
-    //region: 'us-east-1'
-    region: 'ap-northeast-1'
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3.SECRET_KEY,
+    region: process.env.S3_REGION
 });
 
 // -----------------------------------------------------------------------------
@@ -30,9 +29,9 @@ server.get("/", function(req, res, next){
 
 
 var s3 = new AWS.S3();
-var params1 = {Bucket: 'upload-music', Key: 'myKey1', Body: 'Hello!'};
+var params1 = {Bucket: process.env.S3_BUCKET, Key: 'testKey1', Body: 'Hello!'};
 s3.client.putObject(params1).done(function(resp) {
-    console.log("Successfully uploaded data to myBucket/myKey1");
+    console.log("Successfully uploaded data to myBucket/testKey1");
 });
 
 
