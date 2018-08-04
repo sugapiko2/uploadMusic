@@ -33,6 +33,12 @@ server.get("/", function(req, res, next){
 // APIコールのためのクライアントインスタンスを作成
 const bot = new line.Client(line_config);
 
+var s3 = new AWS.S3();
+var params1 = {Bucket: process.env.S3_BUCKET, Key: 'testKey1', Body: 'Hello!'};
+s3.putObject(params1).done(function(resp) {
+    console.log("Successfully uploaded data to myBucket/testKey1");
+});
+
 // -----------------------------------------------------------------------------
 // ルーター設定
 server.post('/webhook', line.middleware(line_config), (req, res, next) => {
@@ -45,11 +51,6 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
 
     // イベントオブジェクトを順次処理。
     req.body.events.forEach((event) => {
-        var s3 = new AWS.S3();
-        var params1 = {Bucket: process.env.S3_BUCKET, Key: 'testKey1', Body: 'Hello!'};
-        s3.client.putObject(params1).done(function(resp) {
-            console.log("Successfully uploaded data to myBucket/testKey1");
-        });
         // この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
         if (event.type == "message" && event.message.type == "text"){
             // ユーザーからのテキストメッセージが「こんにちは」だった場合のみ反応。
