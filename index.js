@@ -47,7 +47,7 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
     req.body.events.forEach((event) => {
         var s3 = new AWS.S3();
         var params1 = {Bucket: process.env.S3_BUCKET, Key: 'testKey1', Body: 'Hello!'};
-        s3.client.putObject(params1).done(function(resp) {
+        s3.putObject(params1).done(function(resp) {
             console.log("Successfully uploaded data to myBucket/testKey1");
         });
         // この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
