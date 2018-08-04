@@ -2,6 +2,7 @@
 // モジュールのインポート
 const server = require("express")();
 const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
+const AWS = require('aws-sdk');
 
 // -----------------------------------------------------------------------------
 // パラメータ設定
@@ -9,6 +10,12 @@ const line_config = {
     channelAccessToken: process.env.LINE_ACCESS_TOKEN, // 環境変数からアクセストークンをセットしています
     channelSecret: process.env.LINE_CHANNEL_SECRET // 環境変数からChannel Secretをセットしています
 };
+AWS.config.update({
+    accessKeyId: 'ACCESS_KEY',
+    secretAccessKey: 'SECRET_KEY',
+    //region: 'us-east-1'
+    region: 'ap-northeast-1'
+});
 
 // -----------------------------------------------------------------------------
 // Webサーバー設定
@@ -19,6 +26,13 @@ server.set('view engine', 'ejs');
 // "/"へのGETリクエストでindex.ejsを表示する。拡張子（.ejs）は省略されていることに注意。
 server.get("/", function(req, res, next){
     res.render("index", {});
+});
+
+
+var s3 = new AWS.S3();
+var params1 = {Bucket: 'upload-music', Key: 'myKey1', Body: 'Hello!'};
+s3.client.putObject(params1).done(function(resp) {
+    console.log("Successfully uploaded data to myBucket/myKey1");
 });
 
 
@@ -62,20 +76,26 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
             }));
         }
         if (event.type == "message" && event.message.type == "file"){
-            if(event.message.fileName.includes("m4a")){
-                events_processed.push(bot.replyMessage(event.replyToken, require("./confirm-button.json")));
-            } else {
-                var contentId = event.message.id;
-                bot.getMessageContent(contentId)
-                    .then((stream) => {
-
-                    })
-                events_processed.push(bot.replyMessage(event.replyToken, {
-                    type: "text",
-                    text: "いい音ですので保存しておきますぞ！"
-                }));
-            }
-
+            // events_processed.push(bot.replyMessage(event.replyToken, require("./confirm-button.json")));
+            events_processed.push(bot.replyMessage(event.replyToken, {
+                type: "text",
+                text: "いい音ですので保存しておきますぞ！"
+            }));
+            var contentId = event.message.id;
+            bot.getMessageContent(contentId)
+                .then((stream) => {
+                    stream.on('data', (chunk) => {
+                        console.log('data');
+                        console.log(chunk);
+                        content.push(new Buffer(chunk));
+                    }).on('error', (err) => {
+                        reject(err);
+                    }).on('end', function(){
+                        console.log('end');
+                        console.log(content);
+                        resolve(Buffer.concat(content));
+                    });
+                });
         }
     });
 
